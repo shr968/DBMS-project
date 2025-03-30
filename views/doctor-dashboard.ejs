@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Light Blue Background */
+            text-align: center;
+            color: #000; /* Black Text */
+            padding: 30px;
+        }
+        h1, h2 {
+            color: #007bff; /* Bright Blue */
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        .hospital-card {
+            border: 2px solid #007bff; /* Blue Border */
+            padding: 15px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #ffffff; /* White Background */
+            border-radius: 8px;
+            transition: 0.3s;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .hospital-card:hover {
+            background-color: #e0ebff; /* Light Blue Hover */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff; /* White Table Background */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff; /* Blue Header */
+            color: white;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff; /* Blue Links */
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .patient-list {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+    <script>
+        function showPatients(hospitalId) {
+            document.querySelectorAll('.patient-list').forEach(el => el.style.display = 'none');
+            document.getElementById('patients-' + hospitalId).style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <h1>Welcome, Doctor <%= doctor_id %></h1>
+
+    <div class="container">
+        <h2>Select a Hospital</h2>
+        <% hospitals.forEach(hospital => { %>
+            <div class="hospital-card" onclick="showPatients('<%= hospital.hospital_id %>')">
+                <h3><%= hospital.hospital_name %></h3>
+            </div>
+        <% }) %>
+
+        <h2>Patients Under Treatment</h2>
+        <% hospitals.forEach(hospital => { %>
+            <div id="patients-<%= hospital.hospital_id %>" class="patient-list">
+                <h3>Patients in <%= hospital.hospital_name %></h3>
+                <table>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Patient Name</th>
+                        <th>View Patient Dashboard</th>
+                    </tr>
+                    <% patients.filter(p => p.hospital_id == hospital.hospital_id).forEach(patient => { %>
+                    <tr>
+                        <td><%= patient.patient_id %></td>
+                        <td><%= patient.first_name %> <%= patient.last_name %></td>
+                        <td><a href="/patient-dashboard/<%= patient.patient_id %>">View Dashboard</a></td>
+                    </tr>
+                    <% }) %>
+                </table>
+            </div>
+        <% }) %>
+    </div>
+</body>
+</html>

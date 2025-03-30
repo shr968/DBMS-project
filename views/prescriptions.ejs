@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescriptions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #007bff;
+        }
+        .prescription-box {
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            width: 90%;
+            text-align: left;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 95%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prescriptions</h1>
+    <div class="container">
+        <h2>Your Existing Prescriptions</h2>
+        <% if (prescriptions.length > 0) { %>
+            <% prescriptions.forEach(prescription => { %>
+                <div class="prescription-box">
+                    <p><strong>Prescription ID:</strong> <%= prescription.id %></p>
+                    <p><strong>Drug Name:</strong> <%= prescription.drug_name %></p>
+                    <p><strong>Dosage:</strong> <%= prescription.dosage %></p>
+                    <p><strong>Duration:</strong> <%= prescription.duration %></p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No prescriptions found.</p>
+        <% } %>
+
+        <h2>Add New Prescription</h2>
+        <form action="/add-prescription/<%= patient_id %>" method="POST">
+            <label for="drug_name">Drug Name:</label>
+            <input type="text" id="drug_name" name="drug_name" required>
+
+            <label for="dosage">Dosage:</label>
+            <input type="text" id="dosage" name="dosage" required>
+
+            <label for="duration">Duration:</label>
+            <input type="text" id="duration" name="duration" required>
+
+            <button type="submit">Save Prescription</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Contacts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Light Blue Background */
+            text-align: center;
+            color: #000; /* Black Text */
+            padding: 30px;
+        }
+        h1, h2 {
+            color: #007bff; /* Bright Blue */
+        }
+        .container {
+            background-color: #ffffff; /* White Background */
+            padding: 20px;
+            width: 350px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #007bff; /* Blue Border */
+        }
+        p {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: 90%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Emergency Contacts</h1>
+
+    <div class="container">
+        <h2>Your Existing Contacts</h2>
+        <% if (contacts.length > 0) { %>
+            <p>Contact 1: <%= contacts[0].contact1 %></p>
+            <% if (contacts[0].contact2) { %>
+                <p>Contact 2: <%= contacts[0].contact2 %></p>
+            <% } %>
+        <% } else { %>
+            <p>No emergency contacts found.</p>
+        <% } %>
+
+        <h2>Add New Contacts</h2>
+        <form action="/add-contact" method="POST">
+            <label for="contact1">Contact 1:</label>
+            <input type="text" id="contact1" name="contact1" required>
+
+            <label for="contact2">Contact 2:</label>
+            <input type="text" id="contact2" name="contact2">
+
+            <button type="submit">Save Contacts</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #007bff;
+        }
+        .record-box {
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            width: 90%;
+            text-align: left;
+        }
+        input, textarea {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        textarea {
+            height: 80px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 95%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Medical Records</h1>
+    <div class="container">
+        <h2>Your Existing Records</h2>
+        <% if (records.length > 0) { %>
+            <% records.forEach(record => { %>
+                <div class="record-box">
+                    <p><strong>Record ID:</strong> <%= record.record_id %></p>
+                    <p><strong>Date:</strong> <%= record.date %></p>
+                    <p><strong>Hospital Name:</strong> <%= record.hospital_name %></p>
+                    <p><strong>Drive Link:</strong> <a href="<%= record.drive_link %>" target="_blank">View Record</a></p>
+                    <% if (record.description) { %>
+                        <p><strong>Description:</strong> <%= record.description %></p>
+                    <% } %>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No records found.</p>
+        <% } %>
+
+        <h2>Add New Medical Record</h2>
+        <form action="/add-record/<%= patient_id %>" method="POST">
+            <label for="drive_link">Google Drive Link:</label>
+            <input type="text" id="drive_link" name="drive_link" required>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="hospital_name">Hospital Name:</label>
+            <input type="text" id="hospital_name" name="hospital_name" required>
+
+            <label for="description">Description (Optional):</label>
+            <textarea id="description" name="description"></textarea>
+
+            <button type="submit">Save Record</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Light Blue */
+            color: #000;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff; /* Blue */
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #007bff;
+        }
+        .insurance-card {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #ccc;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Insurance Details</h1>
+    <div class="container">
+        <h2>Your Existing Insurance</h2>
+        <% if (insurance.length > 0) { %>
+            <% insurance.forEach(ins => { %>
+                <div class="insurance-card">
+                    <p><strong>Insurance ID:</strong> <%= ins.insurance_id %></p>
+                    <p><strong>Name:</strong> <%= ins.name %></p>
+                    <p><strong>Coverage:</strong> <%= ins.coverage %></p>
+                    <p><strong>Expiry Date:</strong> <%= ins.expiry_date %></p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No insurance records found.</p>
+        <% } %>
+
+        <h2>Add New Insurance</h2>
+        <form action="/add-insurance/<%= patient_id %>" method="POST">
+            <label for="name">Insurance Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="coverage">Coverage:</label>
+            <input type="text" id="coverage" name="coverage" required>
+
+            <label for="expiry_date">Expiry Date:</label>
+            <input type="date" id="expiry_date" name="expiry_date" required>
+
+            <button type="submit">Save Insurance</button>
+        </form>
+    </div>
+</body>
+</html>
