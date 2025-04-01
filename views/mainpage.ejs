@@ -1,43 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Record Management System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .login-btn {
-            padding: 12px 24px;
-            font-size: 18px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s ease;
-        }
-        .login-btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <h1>Welcome to Patient Record Management System</h1>
-    <a href="/dashboard"><button class="login-btn">Login</button></a>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>DocuMed</title>
+
+    <!-- font awesome cdn link -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <!-- bootstrap cdn link -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/css/bootstrap.min.css"
+    />
+
+    <!-- custom css file link -->
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+
+  <body>
+    <!-- header section starts -->
+    <header class="header fixed-top">
+      <div class="container">
+        <div class="row align-items-center justify-content-between">
+          <a href="#home" class="logo">Docu<span>Med.</span></a>
+          <nav class="nav">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+          </nav>
+
+          <a href="#" class="link-btn" onclick="openPopup(event)"
+            >Login | Sign Up</a
+          >
+
+          <div id="menu-btn" class="fas fa-bars"></div>
+        </div>
+      </div>
+    </header>
+    <!-- header section ends -->
+
+    <!-- home section starts -->
+    <section class="home" id="home">
+      <div class="container">
+        <div class="row min-vh-100 align-items-center">
+          <div class="content text-center text-md-left">
+            <h3>Your Records, All in One Place</h3>
+            <p>
+              Safely access your complete medical history anytime, with instant
+              and secure availability.
+            </p>
+            <a href="#" class="link-btn" onclick="openPopup(event)"
+              >Get started!</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- home section ends -->
+
+    <!-- about section starts -->
+    <section class="about" id="about">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6 image">
+            <img
+              src="/images/about-img.jpg"
+              class="w-100 mb-5 mb-md-0"
+              alt=""
+            />
+          </div>
+          <div class="col-md-6 content">
+            <span>about us</span>
+            <h3>Managing Medical Records Made Easy and Secure</h3>
+            <p>
+              Access, manage, and share your medical history securely from
+              anywhere. Our platform ensures your health records are safe,
+              organized, and always available when you need them.
+            </p>
+
+            <a href="#" class="link-btn" onclick="openPopup(event)"
+              >Get Started!</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- about section ends -->
+
+    <!-- services section starts -->
+    <section class="services" id="services">
+      <h1 class="heading">Our Services</h1>
+      <div class="box-container container">
+        <div class="box">
+          <img src="/images/secure-medical-records.png" alt="" />
+          <h3>Secure Medical Records</h3>
+          <p>
+            Store and access your medical history securely from anywhere,
+            anytime.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="/images/instant-record-retreival.png" alt="" />
+          <h3>Instant Record Retrieval</h3>
+          <p>
+            Quickly fetch past prescriptions, reports, and medical documents in
+            one click.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="/images/doctor-access.png" alt="" />
+          <h3>Doctor Access</h3>
+          <p>
+            Share your medical history instantly with healthcare providers for
+            better treatment.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="/images/encrypted-data-protection.png" alt="" />
+          <h3>Encrypted Data Protection</h3>
+          <p>
+            Your records are safely encrypted, ensuring complete privacy and
+            security.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="/images/seamless-integration.png" alt="" />
+          <h3>Seamless Integration</h3>
+          <p>
+            Connect with hospitals and clinics for real-time updates on medical
+            records.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="/images/easy-appointment-tracking.png" alt="" />
+          <h3>Easy Appointment Tracking</h3>
+          <p>Keep track of past and upcoming medical appointments with ease.</p>
+        </div>
+      </div>
+    </section>
+    <!-- services section ends -->
+
+    <!-- footer section starts -->
+    <div class="credit">
+      &copy; 2025 Docu<span>Med</span>. All Rights Reserved.
+    </div>
+    <!-- footer section ends -->
+
+    <!-- Popup section starts -->
+    <div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+      <div class="popup" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closePopup(event)">&times;</div>
+        <div class="form">
+          <h2>Sign In As</h2>
+          <div class="form-element">
+            <button onclick="openPatientLogin(event)">Patient</button>
+            <button onclick="openDoctorLogin(event)">Doctor</button>
+            <button onclick="openHospitalLogin(event)">Hospital</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Popup section ends -->
+
+    <!-- Patient login section starts -->
+    <div
+      class="popup-overlay"
+      id="patientLoginPopup"
+      onclick="closePatientLogin(event)"
+    >
+      <div class="popup" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closePatientLogin(event)">&times;</div>
+        <div class="form">
+          <h2>Patient Login</h2>
+          <form action="/patient-login" method="POST">
+            <div class="form-element">
+              <label for="patient_id">Patient ID:</label>
+              <input type="text" id="patient_id" name="patient_id" required />
+            </div>
+            <div class="form-element">
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+            <div class="form-element">
+              <button type="submit">Login</button>
+            </div>
+          </form>
+          <p>
+            New here?
+            <a href="#" onclick="openPatientRegister(event)">Register</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Patient login section ends -->
+
+    <!-- Doctor login section starts -->
+    <div
+      class="popup-overlay"
+      id="doctorLoginPopup"
+      onclick="closeDoctorLogin(event)"
+    >
+      <div class="popup" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closeDoctorLogin(event)">&times;</div>
+        <div class="form">
+          <h2>Doctor Login</h2>
+          <form action="/doctor-login" method="POST">
+            <div class="form-element">
+              <label for="doctor_id">Doctor ID:</label>
+              <input type="text" id="doctor_id" name="doctor_id" required />
+            </div>
+            <div class="form-element">
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+            <div class="form-element">
+              <button type="submit">Login</button>
+            </div>
+          </form>
+          <p>
+            New here?
+            <a href="#" onclick="openDoctorRegister(event)">Register</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Doctor login section ends -->
+
+    <!-- Hospital login section starts -->
+    <div
+      class="popup-overlay"
+      id="hospitalLoginPopup"
+      onclick="closeHospitalLogin(event)"
+    >
+      <div class="popup" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closeHospitalLogin(event)">&times;</div>
+        <div class="form">
+          <h2>Hospital Login</h2>
+          <form action="/hospital-login" method="POST">
+            <div class="form-element">
+              <label for="hospital_id">Hospital ID:</label>
+              <input type="text" id="hospital_id" name="hospital_id" required />
+            </div>
+            <div class="form-element">
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+            <div class="form-element">
+              <button type="submit">Login</button>
+            </div>
+          </form>
+          <p>
+            New here?
+            <a href="#" onclick="openHospitalRegister(event)">Register</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Hospital login section ends -->
+
+    <!-- Patient Registration Popup Starts -->
+    <div
+      class="popup-overlay"
+      id="patientRegisterPopup"
+      onclick="closePatientRegister(event)"
+    >
+      <div class="popup" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closePatientRegister(event)">
+          &times;
+        </div>
+        <div class="form">
+          <h2>Patient Registration</h2>
+          <form action="/patient-register" method="POST">
+            <div class="form-element">
+              <label for="first_name">First Name:</label>
+              <input type="text" id="first_name" name="first_name" required />
+            </div>
+
+            <div class="form-element">
+              <label for="middle_name">Middle Name:</label>
+              <input type="text" id="middle_name" name="middle_name" />
+            </div>
+
+            <div class="form-element">
+              <label for="last_name">Last Name:</label>
+              <input type="text" id="last_name" name="last_name" required />
+            </div>
+
+            <div class="form-element">
+              <label for="dob">Date of Birth:</label>
+              <input type="date" id="dob" name="dob" required />
+            </div>
+
+            <div class="form-element">
+              <label for="sex">Sex:</label>
+              <select id="sex" name="sex" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-element">
+              <label for="blood_group">Blood Group:</label>
+              <select id="blood_group" name="blood_group" required>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+              </select>
+            </div>
+
+            <div class="form-element">
+              <button type="submit">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Patient Registration Popup Ends -->
+
+    <!-- Doctor Registration Popup Starts -->
+    <div
+      class="popup-overlay"
+      id="doctorRegisterPopup"
+      onclick="closeDoctorRegister(event)"
+    >
+      <div class="popup" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closeDoctorRegister(event)">
+          &times;
+        </div>
+        <div class="form">
+          <h2>Doctor Registration</h2>
+          <form action="/doctor-register" method="POST">
+            <div class="form-element">
+              <label for="first_name">First Name:</label>
+              <input type="text" id="first_name" name="first_name" required />
+            </div>
+
+            <div class="form-element">
+              <label for="mid_name">Middle Name:</label>
+              <input type="text" id="mid_name" name="mid_name" />
+            </div>
+
+            <div class="form-element">
+              <label for="last_name">Last Name:</label>
+              <input type="text" id="last_name" name="last_name" required />
+            </div>
+
+            <div class="form-element">
+              <label for="speciality">Speciality:</label>
+              <input type="text" id="speciality" name="speciality" required />
+            </div>
+
+            <div class="form-element">
+              <label for="hospital_id">Hospital ID:</label>
+              <input
+                type="number"
+                id="hospital_id"
+                name="hospital_id"
+                required
+              />
+            </div>
+
+            <div class="form-element">
+              <button type="submit">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Doctor Registration Popup Ends -->
+
+    <!-- Hospital Registration Popup Starts -->
+    <div
+      class="popup-overlay"
+      id="hospitalRegisterPopup"
+      onclick="closeHospitalRegister(event)"
+    >
+      <div class="popup" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closeHospitalRegister(event)">
+          &times;
+        </div>
+        <div class="form">
+          <h2>Hospital Registration</h2>
+          <form action="/hospital-register" method="POST">
+            <div class="form-element">
+              <label for="name">Hospital Name:</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+
+            <div class="form-element">
+              <label for="contact">Contact:</label>
+              <input type="text" id="contact" name="contact" required />
+            </div>
+
+            <div class="form-element">
+              <label for="location">Location:</label>
+              <input type="text" id="location" name="location" required />
+            </div>
+
+            <div class="form-element">
+              <button type="submit">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Hospital Registration Popup Ends -->
+
+    <!-- custom js file link -->
+    <script src="/js/script.js"></script>
+  </body>
 </html>

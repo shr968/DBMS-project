@@ -1,54 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Patient Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff; /* Light Blue Background */
-            text-align: center;
-            color: #000; /* Black Text */
-            padding: 30px;
-        }
-        h1 {
-            color: #007bff; /* Bright Blue */
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-        }
-        .card {
-            display: inline-block;
-            width: 220px;
-            height: 150px;
-            margin: 15px;
-            padding: 20px;
-            border: 2px solid #007bff; /* Blue Border */
-            border-radius: 10px;
-            text-align: center;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #ffffff; /* White Background */
-            color: #007bff; /* Blue Text */
-            font-weight: bold;
-            transition: 0.3s;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .card:hover {
-            background-color: #e0ebff; /* Light Blue Hover */
-        }
-    </style>
-</head>
-<body>
-    <h1>Welcome, Patient <%= patient_id %></h1>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <!-- custom css file link -->
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <h1>Hello, <span><%= patient_id %></span>! Hope You're Feeling Well</h1>
+    <p>
+      Here's everything you need at your fingertips. Access your records,
+      prescriptions, insurance details, and more with ease.
+    </p>
+
     <div class="container">
-        <div class="card" onclick="location.href='/records/<%= patient_id %>'">Records</div>
-        <div class="card" onclick="location.href='/prescriptions/<%= patient_id %>'">Prescriptions</div>
-        <div class="card" onclick="location.href='/insurance/<%= patient_id %>'">Insurance</div>
-        <div class="card" onclick="location.href='/emergency/<%= patient_id %>'">Emergency Contacts</div>
-        <div class="card" onclick="location.href='/treatment/<%= patient_id %>'">Current Treatment</div> 
+      <div class="card" onclick="location.href='/records/<%= patient_id %>'">
+        <i class="fas fa-file-medical"></i>
+        <span>Records</span>
+        <p>View your past medical history and reports.</p>
+      </div>
+      <div
+        class="card"
+        onclick="location.href='/prescriptions/<%= patient_id %>'"
+      >
+        <i class="fas fa-pills"></i>
+        <span>Prescriptions</span>
+        <p>Check your prescribed medications and dosage.</p>
+      </div>
+      <div class="card" onclick="location.href='/insurance/<%= patient_id %>'">
+        <i class="fas fa-shield-alt"></i>
+        <span>Insurance</span>
+        <p>Manage and review your health insurance details.</p>
+      </div>
+      <div class="card" onclick="location.href='/emergency/<%= patient_id %>'">
+        <i class="fas fa-phone-alt"></i>
+        <span>Emergency Contacts</span>
+        <p>Access your emergency contacts for quick help.</p>
+      </div>
+      <div class="card" onclick="location.href='/treatment/<%= patient_id %>'">
+        <i class="fas fa-procedures"></i>
+        <span>Current Treatment</span>
+        <p>Monitor your ongoing treatments and progress.</p>
+      </div>
     </div>
-</body>
+  </body>
 </html>
