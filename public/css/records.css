@@ -1,0 +1,181 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+:root {
+  --blue: #00b8b8;
+  --black: #333;
+  --white: #fff;
+  --light-color: #666;
+  --light-bg: #eee;
+  --border: 0.2rem solid rgba(0, 0, 0, 0.1);
+  --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+  text-decoration: none;
+}
+
+html {
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 6.5rem;
+  background: var(--light-bg);
+}
+
+.heading {
+  text-align: center;
+  font-size: 4rem;
+  color: var(--black);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 3rem;
+}
+
+.record-form,
+.record-table {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--white);
+  box-shadow: var(--box-shadow);
+  border-radius: 10px;
+}
+
+.form-container .form-element {
+  margin-bottom: 15px;
+}
+
+.form-container label {
+  font-size: 1.6rem;
+  color: var(--black);
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-container input,
+.form-container textarea {
+  width: 100%;
+  padding: 10px;
+  border: var(--border);
+  border-radius: 5px;
+  font-size: 1.4rem;
+}
+
+.form-container textarea {
+  height: 100px;
+  resize: none;
+}
+
+.link-btn {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 1.7rem;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  background: #008f8f;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+
+table th,
+table td {
+  padding: 10px;
+  text-align: left;
+  border: var(--border);
+  font-size: 1.6rem;
+}
+
+table th {
+  background: var(--blue);
+  color: var(--white);
+}
+
+table tbody tr:nth-child(even) {
+  background: var(--light-bg);
+}
+
+/* Popup Background */
+#popup-form {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+/* Popup Box */
+.popup-content {
+  background: var(--white);
+  padding: 2rem;
+  width: 400px;
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+  position: relative;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+/* Form Elements */
+.popup-content h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.popup-content input,
+.popup-content textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: var(--border);
+  border-radius: 5px;
+  font-size: 1.4rem;
+}
+
+.popup-content textarea {
+  height: 100px;
+  resize: none;
+}
+
+/* Submit Button */
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 1.7rem;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background: #008f8f;
+}
