@@ -5,59 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Dashboard</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff; /* Light Blue */
-            color: #000; /* Black Text */
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+        :root {
+            --blue: #00b8b8;
+            --black: #333;
+            --white: #fff;
+            --light-bg: #eee;
+            --border: 0.2rem solid rgba(0, 0, 0, 0.1);
+            --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            background: var(--light-bg);
+            font-size: 62.5%;
+        }
+
+        .header-banner {
+            background: var(--blue);
+            color: var(--white);
             text-align: center;
-            padding: 20px;
+            padding: 1rem;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
         }
-        h1 {
-            color: #007bff; /* Blue */
+
+        .header-banner h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
         }
+
         .container {
             width: 70%;
-            margin: auto;
-            background-color: #fff; /* White Background */
-            padding: 20px;
+            margin: 6rem auto 2rem;
+            background: var(--white);
+            padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            border: 2px solid #007bff;
+            box-shadow: var(--box-shadow);
+            border: var(--border);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #ffffff; /* White Table */
+            margin-top: 1.5rem;
+            background: var(--white);
             border-radius: 8px;
         }
+
         th, td {
-            border: 1px solid #ccc;
-            padding: 12px;
+            border: var(--border);
+            padding: 8px;
             text-align: left;
+            font-size: 1.4rem;
         }
+
         th {
-            background-color: #007bff; /* Blue Header */
-            color: white;
+            background: var(--blue);
+            color: var(--white);
         }
+
         tr:nth-child(even) {
-            background-color: #f2f2f2; /* Light Grey for Alternate Rows */
+            background: var(--light-bg);
         }
+
         a {
             text-decoration: none;
-            color: #007bff;
+            color: var(--blue);
             font-weight: bold;
         }
+
         a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome, Hospital <%= hospital_id %></h1>
+    <div class="header-banner">
+        <h1>Welcome, Hospital <%= hospital_id %></h1>
+    </div>
 
     <div class="container">
-        <h2>Patients Being Treated</h2>
+        <center><h1 class="heading" style="font-size: 2rem;">PATIENTS BEING TREATED</h1></center>
         <table>
             <tr>
                 <th>Patient ID</th>

@@ -384,6 +384,7 @@
       </div>
     </div>
     <!-- Doctor Registration Popup Ends -->
+     
 
     <!-- Hospital Registration Popup Starts -->
     <div
@@ -420,8 +421,20 @@
         </div>
       </div>
     </div>
+    
     <!-- Hospital Registration Popup Ends -->
-
+    <% if (showLoginPopup) { %>
+      <script>
+        // Automatically open the hospital login popup after page load
+        openHospitalLogin(event);
+      </script>
+    <% } %>
+    <% if (showDoctorLoginPopup) { %>
+      <script>
+        // Automatically open the hospital login popup after page load
+        openDoctorLogin(event);
+      </script>
+    <% } %>
     <!-- custom js file link -->
     <script src="/js/script.js"></script>
   </body>

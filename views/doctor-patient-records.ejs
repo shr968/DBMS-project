@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patients Under Treatment</title>
+    <link rel="stylesheet" href="/css/records.css" />
+  </head>
+  <body>
+    <header class="header-banner">
+        <h1>Patients Under Your Care</h1>
+        <!-- <button class="add-record-btn" onclick="openForm()">Add New Record</button> -->
+    </header>
+    
+    <section class="record-table">
+      <h2 class="heading-3">Patients Records</h2>
+      
+      <% if (patients.length > 0) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Patient ID</th>
+            <th>Patient Name</th>
+            <th>View Patient Dashboard</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% patients.forEach(patient => { %>
+          <tr>
+            <td style="color: black;"><%= patient.patient_id %></td>
+            <td style="color: black;"><%= patient.first_name %> <%= patient.last_name %></td>
+            <td><a href="/patient-dashboard/<%= patient.patient_id %>" target="_blank">View Dashboard</a></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <p style="text-align: center; font-size: 1.6rem">No patients assigned to you in this hospital.</p>
+      <% } %>
+    </section>
+
+    <br>
+  </body>
+</html>

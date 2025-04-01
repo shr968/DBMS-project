@@ -35,7 +35,14 @@ html {
   font-weight: 600;
   margin-bottom: 3rem;
 }
-
+.heading-3 {
+  text-align: center;
+  font-size: 3rem;
+  color: var(--black);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 3rem;
+}
 .record-form,
 .record-table {
   max-width: 800px;
@@ -178,4 +185,16 @@ table tbody tr:nth-child(even) {
 
 .submit-btn:hover {
   background: #008f8f;
+}
+.header-banner {
+  background: var(--blue);
+  color: var(--white);
+  text-align: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.header-banner h1 {
+  font-size: 3rem;
+  font-weight: 600;
 }
