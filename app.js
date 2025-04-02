@@ -46,7 +46,7 @@ function authenticatePatientOrDoctor(req, res, next) {
 }
 //starts
 app.get("/", (req, res) => {
-  res.render("mainpage", { showLoginPopup: false, showDoctorLoginPopup: false});
+  res.render("mainpage", { showLoginPopup: false, showDoctorLoginPopup: false, doctor_id: null, hospital_id: null, patient_id: null})
 });
 app.get("/dashboard", (req, res) => {
   res.render("dashboard");
@@ -96,11 +96,8 @@ app.post("/doctor-register", (req, res) => {
     let doctor_id;
 
     if (results.length > 0) {
-      // Doctor exists, get existing doctor_id
       doctor_id = results[0].doctor_id;
-      console.log(`Existing doctor found with ID: ${doctor_id}`);
     } else {
-      // Doctor does not exist, create a new entry
       const doctorSql = `INSERT INTO doctors (first_name, mid_name, last_name, speciality) VALUES (?, ?, ?, ?)`;
 
       return db.query(doctorSql, [first_name, mid_name, last_name, speciality], (err, result) => {
@@ -110,9 +107,8 @@ app.post("/doctor-register", (req, res) => {
         }
 
         doctor_id = result.insertId;
-        console.log(`New doctor registered with ID: ${doctor_id}`);
 
-        // Insert into doctor_hospital after doctor creation
+        // Link doctor to hospital
         linkDoctorToHospital(doctor_id, hospital_id, res);
       });
     }
@@ -121,6 +117,25 @@ app.post("/doctor-register", (req, res) => {
     linkDoctorToHospital(doctor_id, hospital_id, res);
   });
 });
+
+function linkDoctorToHospital(doctor_id, hospital_id, res) {
+  const doctorHospitalSql = `INSERT INTO doctor_hospital (doctor_id, hospital_id) VALUES (?, ?)`;
+
+  db.query(doctorHospitalSql, [doctor_id, hospital_id], (err) => {
+    if (err) {
+      console.error("Error linking doctor to hospital:", err);
+      return res.send("Doctor registered, but hospital link failed.");
+    }
+    res.render("mainpage", {
+      showLoginPopup: false,
+      showDoctorLoginPopup: true,
+      doctor_id: doctor_id,
+      hospital_id: null,
+      patient_id: null, // Send the doctor_id to the view
+    });
+  });
+}
+
 
 // Function to link doctor to hospital
 function linkDoctorToHospital(doctor_id, hospital_id, res) {
@@ -131,7 +146,7 @@ function linkDoctorToHospital(doctor_id, hospital_id, res) {
       console.error("Error linking doctor to hospital:", err);
       return res.send("Doctor registered, but hospital link failed.");
     }
-    res.render("mainpage", { showLoginPopup: false, showDoctorLoginPopup: true });
+    res.render("mainpage", { showLoginPopup: false, showDoctorLoginPopup: true, doctor_id: doctor_id, hospital_id: null, patient_id: null });
   });
 }
 
@@ -218,9 +233,17 @@ app.post("/hospital-register", (req, res) => {
       console.error("Error registering hospital:", err);
       return res.send("Error during registration.");
     }
-    res.render("mainpage", { showLoginPopup: true, showDoctorLoginPopup: false });
+    const hospital_id = result.insertId;
+    res.render("mainpage", {
+      showLoginPopup: true,
+      showDoctorLoginPopup: false,
+      hospital_id: hospital_id,
+      doctor_id: null,
+      patient_id: null // Send the hospital_id to the view
+    });
   });
 });
+
 app.get("/hospital-login", (req, res) => {
   res.render("hospital-login");
 });
@@ -295,8 +318,7 @@ function generatePatientID() {
 }
 
 app.post("/patient-register", (req, res) => {
-  const { first_name, middle_name, last_name, dob, sex, blood_group } =
-    req.body;
+  const { first_name, middle_name, last_name, dob, sex, blood_group } = req.body;
   const patient_id = generatePatientID();
 
   const sql = `INSERT INTO patients (patient_id, first_name, middle_name, last_name, dob, sex, blood_group)
@@ -310,11 +332,18 @@ app.post("/patient-register", (req, res) => {
         console.error("Registration error:", err);
         res.send("Error registering patient.");
       } else {
-        res.send(`Registration successful! Your Patient ID is: ${patient_id}`);
+        res.render("mainpage", {
+          showLoginPopup: false,
+          showDoctorLoginPopup: true,
+          patient_id: patient_id,
+          doctor_id: null,
+          hospital_id: null // Send the patient_id to the view
+        });
       }
     }
   );
 });
+
 
 app.get(
   "/patient-dashboard/:patient_id",
@@ -480,13 +509,15 @@ app.post("/add-record/:id", (req, res) => {
     return res.redirect("/patient-login");
   }
 
-  const { drive_link, date, hospital_name, description } = req.body;
-  const sql = `INSERT INTO records (patient_id, drive_link, date, hospital_name, description) 
-                 VALUES (?, ?, ?, ?, ?)`;
+  const { drive_link, date, hospital_name, description, doctor_id } = req.body;
+  
+  // Assuming doctor_id is passed and it's valid
+  const sql = `INSERT INTO records (patient_id, drive_link, date, hospital_name, description, doctor_id) 
+                 VALUES (?, ?, ?, ?, ?, ?)`;
 
   db.query(
     sql,
-    [patient_id, drive_link, date, hospital_name, description || null],
+    [patient_id, drive_link, date, hospital_name, description || null, doctor_id],
     (err, result) => {
       if (err) {
         console.error("Error saving record:", err);
@@ -497,6 +528,7 @@ app.post("/add-record/:id", (req, res) => {
     }
   );
 });
+
 
 app.get("/treatment/:patient_id", authenticatePatientOrDoctor, (req, res) => {
   const patient_id = req.params.patient_id;
@@ -538,6 +570,35 @@ app.post("/treatment/add", (req, res) => {
       res.redirect(`/treatment/${patient_id}`);
     }
   );
+});
+
+app.get("/view-hospitals", (req, res) => {
+  const sql = "SELECT hospital_id, name, location, contact FROM hospital";
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching hospitals:", err);
+      return res.send("Error fetching hospitals.");
+    }
+    res.render("view-hospitals", { hospitals: results });
+  });
+});
+
+app.get('/hospitals/:id/doctors', (req, res) => {
+  const hospitalId = req.params.id;
+  
+  const query = `
+      SELECT d.doctor_id, d.first_name, d.last_name, d.speciality, h.name as hospital_name
+      FROM doctors d
+      JOIN doctor_hospital dh ON d.doctor_id = dh.doctor_id
+      JOIN hospital h ON dh.hospital_id = h.hospital_id
+      WHERE h.hospital_id = ?;
+  `;
+
+  db.query(query, [hospitalId], (err, results) => {
+      if (err) throw err;
+      res.render('view-doctors', { doctors: results, hospitalName: results.length ? results[0].hospital_name : "Unknown Hospital" });
+  });
 });
 
 // Start server

@@ -57,6 +57,7 @@
             <a href="#" class="link-btn" onclick="openPopup(event)"
               >Get started!</a
             >
+            <a href="/view-hospitals" class="link-btn">View Hospitals</a>
           </div>
         </div>
       </div>
@@ -435,6 +436,23 @@
         openDoctorLogin(event);
       </script>
     <% } %>
+    <% if (doctor_id) { %>
+      <script>
+        alert("Doctor ID: <%= doctor_id %>");
+      </script>
+    <% } %>
+    <% if (patient_id) { %>
+      <script>
+        alert("Patient ID: <%= patient_id %>");
+      </script>
+    <% } %>
+    <% if (hospital_id) { %>
+      <script>
+        alert("Hospital ID: <%= hospital_id %>");
+      </script>
+    <% } %>
+            
+  
     <!-- custom js file link -->
     <script src="/js/script.js"></script>
   </body>
