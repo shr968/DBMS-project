@@ -1,86 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Emergency Contacts</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f8ff; /* Light Blue Background */
-        text-align: center;
-        color: #000; /* Black Text */
-        padding: 30px;
-      }
-      h1,
-      h2 {
-        color: #007bff; /* Bright Blue */
-      }
-      .container {
-        background-color: #ffffff; /* White Background */
-        padding: 20px;
-        width: 350px;
-        margin: auto;
-        border-radius: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        border: 2px solid #007bff; /* Blue Border */
-      }
-      p {
-        font-size: 16px;
-        font-weight: bold;
-        margin: 10px 0;
-      }
-      label {
-        font-weight: bold;
-        display: block;
-        margin-top: 10px;
-      }
-      input {
-        width: 90%;
-        padding: 8px;
-        margin-top: 5px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-      button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        margin-top: 15px;
-        cursor: pointer;
-        border-radius: 5px;
-        font-weight: bold;
-        width: 100%;
-      }
-      button:hover {
-        background-color: #0056b3;
-      }
-    </style>
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Contacts</title>
+  <link rel="stylesheet" href="/css/records.css">
+  <style>
+    #contacts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.contact-card {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 5px solid #008f8f;
+}
+
+.contact-card:hover {
+  transform: scale(1.02);
+  box-shadow: 6px 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.contact-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  color: #008f8f;
+}
+
+.contact-card p {
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.contact-card strong {
+  color: #555;
+}
+
+/* Responsive - Single Column on Smaller Screens */
+@media (max-width: 600px) {
+  #contacts-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 400px;
+      text-align: center;
+      position: relative;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
     <h1>Emergency Contacts</h1>
+    <button class="add-record-btn" onclick="openForm()">Add New Contact</button>
+  </header>
 
-    <div class="container">
-      <h2>Your Existing Contacts</h2>
+  <section class="record-table">
+    <h2 class="heading">Your Existing Contacts</h2>
+    <div id="contacts-container">
       <% if (contacts.length > 0) { %>
-      <p>Contact 1: <%= contacts[0].contact1 %></p>
-      <% if (contacts[0].contact2) { %>
-      <p>Contact 2: <%= contacts[0].contact2 %></p>
-      <% } %> <% } else { %>
-      <p>No emergency contacts found.</p>
+        <% contacts.forEach(contact => { %>
+          <div class="contact-card">
+            <h3><%= contact.name %></h3>
+            <p><strong>Relation:</strong> <%= contact.relation %></p>
+            <p><strong>Contact:</strong> <%= contact.contact %></p>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p style="text-align: center; font-size: 1.6rem">No emergency contacts found.</p>
       <% } %>
+    </div>
+  </section>
 
-      <h2>Add New Contacts</h2>
-      <form action="/add-contact" method="POST">
+  <div id="popup-form" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closeForm()">&times;</span>
+      <h2>Add New Emergency Contact</h2>
+      <form id="contact-form">
+        <label for="contact1_name">Contact 1 Name:</label>
+        <input type="text" id="contact1_name" name="contact1_name" required>
+        <label for="contact1_relation">Contact 1 Relation:</label>
+        <input type="text" id="contact1_relation" name="contact1_relation" required>
         <label for="contact1">Contact 1:</label>
-        <input type="text" id="contact1" name="contact1" required />
+        <input type="text" id="contact1" name="contact1" required>
 
+        <label for="contact2_name">Contact 2 Name:</label>
+        <input type="text" id="contact2_name" name="contact2_name">
+        <label for="contact2_relation">Contact 2 Relation:</label>
+        <input type="text" id="contact2_relation" name="contact2_relation">
         <label for="contact2">Contact 2:</label>
-        <input type="text" id="contact2" name="contact2" />
+        <input type="text" id="contact2" name="contact2">
 
         <button type="submit">Save Contacts</button>
       </form>
     </div>
-  </body>
+  </div>
+
+  <script>
+    function openForm() {
+      document.getElementById("popup-form").style.display = "flex";
+    }
+
+    function closeForm() {
+      document.getElementById("popup-form").style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("contact-form");
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch("/add-contact", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (response.ok) {
+            alert("Contacts added successfully!");
+            location.reload();
+          } else {
+            console.error("Error adding contact");
+          }
+        } catch (error) {
+          console.error("Error submitting contact:", error);
+        }
+      });
+    });
+  </script>
+</body>
 </html>

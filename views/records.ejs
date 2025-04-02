@@ -17,31 +17,38 @@
     <section class="record-table">
       <h2 class="heading">Medical Records</h2>
       <% if (records.length > 0) { %>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Hospital Name</th>
-            <th>Description</th>
-            <th>Google Drive Link</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% records.forEach(record => { %>
-          <tr>
-            <td>
-              <%= new Date(record.date).toLocaleDateString("en-US", { year:
-              "numeric", month: "long", day: "numeric" }) %>
-            </td>
-            <td><%= record.hospital_name %></td>
-            <td><%= record.description ? record.description : 'N/A' %></td>
-            <td>
-              <a href="<%= record.drive_link %>" target="_blank">View Record</a>
-            </td>
-          </tr>
-          <% }) %>
-        </tbody>
-      </table>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Hospital Name</th>
+              <th>Description</th>
+              <th>Google Drive Link</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% records.forEach(record => { %>
+            <tr>
+              <td><%= new Date(record.date).toLocaleDateString("en-US") %></td>
+              <td><%= record.hospital_name %></td>
+              <td><%= record.description ? record.description : 'N/A' %></td>
+              <td>
+                <a href="<%= record.drive_link %>" target="_blank">View Record</a>
+              </td>
+              <td>
+                <button class="edit-btn" onclick="openEditForm('<%= record.record_id %>', '<%= record.date %>', '<%= record.hospital_name %>', '<%= record.description %>', '<%= record.drive_link %>')">
+                  Edit
+                </button>
+                  <button class="delete-btn" onclick="deleteRecord('<%= patient_id %>', '<%= record.record_id %>')">
+                    Delete
+                  </button>
+                
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>        
       <% } else { %>
       <p style="text-align: center; font-size: 1.6rem">No records found.</p>
       <% } %>
@@ -71,6 +78,31 @@
         </form>
       </div>
     </div>
+    <!-- Edit Record Popup -->
+    <div id="edit-popup-form" class="popup">
+      <div class="popup-content">
+        <span class="close" onclick="closeEditForm()">&times;</span>
+        <h2>Edit Medical Record</h2>
+        <form id="edit-form" method="POST" action="/update-record">
+          <input type="hidden" id="edit_record_id" name="record_id" />
+        
+          <label for="edit_drive_link">Google Drive Link:</label>
+          <input type="text" id="edit_drive_link" name="drive_link" required />
+        
+          <label for="edit_date">Date:</label>
+          <input type="date" id="edit_date" name="date" required />
+        
+          <label for="edit_hospital_name">Hospital Name:</label>
+          <input type="text" id="edit_hospital_name" name="hospital_name" required />
+        
+          <label for="edit_description">Description (Optional):</label>
+          <textarea id="edit_description" name="description"></textarea>
+        
+          <button type="submit">Save Changes</button>
+        </form>        
+      </div>
+    </div>
+    
     <script src="/js/records.js"></script>
   </body>
 </html>

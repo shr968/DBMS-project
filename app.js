@@ -5,6 +5,9 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(
   session({
     secret: "your_secret_key",
@@ -18,12 +21,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// MySQL Connection
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
-  database: "documed",
+  password: "mahakali",
+  database: "prms",
 });
 
 db.connect((err) => {
@@ -44,6 +46,8 @@ function authenticatePatientOrDoctor(req, res, next) {
   }
   res.redirect("/patient-login");
 }
+
+
 //starts
 app.get("/", (req, res) => {
   res.render("mainpage", {
@@ -58,7 +62,6 @@ app.get("/dashboard", (req, res) => {
   res.render("dashboard");
 });
 
-//doctor routes
 
 app.get("/doctor-login", (req, res) => {
   res.render("doctor-login");
@@ -393,45 +396,82 @@ app.get("/emergency-contacts", (req, res) => {
 
 app.get("/emergency/:id", authenticatePatientOrDoctor, (req, res) => {
   const patient_id = req.params.id;
+
+  // Check if the logged-in user has access to this patient's emergency contacts
   if (
     req.session.doctor_id ||
     req.session.hospital_id ||
     req.session.patient_id == patient_id
   ) {
     const sql = `SELECT * FROM emergency_contacts WHERE patient_id = ?`;
+
     db.query(sql, [patient_id], (err, results) => {
       if (err) {
         console.error("Error fetching contacts:", err);
-        res.send("Error loading emergency contacts.");
-      } else {
-        res.render("emergency-contacts", { patient_id, contacts: results });
+        return res.status(500).send("Error loading emergency contacts.");
       }
+
+      let contacts = [];
+      if (results.length > 0) {
+        const contactData = results[0];
+
+        if (contactData.contact1_name && contactData.contact1_relation && contactData.contact1) {
+          contacts.push({
+            name: contactData.contact1_name,
+            relation: contactData.contact1_relation,
+            contact: contactData.contact1,
+          });
+        }
+
+        if (contactData.contact2_name && contactData.contact2_relation && contactData.contact2) {
+          contacts.push({
+            name: contactData.contact2_name,
+            relation: contactData.contact2_relation,
+            contact: contactData.contact2,
+          });
+        }
+      }
+
+      res.render("emergency-contacts", { patient_id, contacts });
     });
-  } else res.redirect("/patient-login");
+  } else {
+    return res.redirect("/patient-login");
+  }
 });
 app.get("/hospital-register", (req, res) => {
   res.render("hospital-register");
 });
 
 app.post("/add-contact", (req, res) => {
+  console.log("Received Data:", req.body); // Debugging: Check if data is received
+
   const patient_id = req.session.patient_id;
-  const { contact1, contact2 } = req.body;
+  const { contact1_name, contact1_relation, contact1, contact2_name, contact2_relation, contact2 } = req.body;
 
   if (!patient_id) {
-    console.error("Patient ID not found in session.");
-    return res.redirect("/patient-login");
+    return res.status(401).json({ message: "Patient ID not found in session." });
   }
 
-  const sql = `INSERT INTO emergency_contacts (patient_id, contact1, contact2) VALUES (?, ?, ?)`;
+  const sql = `INSERT INTO emergency_contacts (patient_id, contact1, contact2, contact1_name, contact1_relation, contact2_name, contact2_relation) 
+               VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-  db.query(sql, [patient_id, contact1, contact2], (err, result) => {
+  db.query(sql, [patient_id, contact1, contact2, contact1_name, contact1_relation, contact2_name, contact2_relation], (err, result) => {
     if (err) {
       console.error("Error saving contacts:", err);
-      return res.send("Error saving contacts.");
+      return res.status(500).json({ message: "Error saving contacts." });
     }
-    res.redirect(`/emergency/${patient_id}`);
+
+    res.json({
+      message: "Contacts saved successfully!",
+      contacts: [
+        { name: contact1_name, relation: contact1_relation, contact: contact1 },
+        { name: contact2_name, relation: contact2_relation, contact: contact2 },
+      ].filter(contact => contact.name && contact.relation && contact.contact) // Remove empty contacts
+    });
   });
 });
+
+
 app.get("/insurance/:id", authenticatePatientOrDoctor, (req, res) => {
   const patient_id = req.params.id;
   if (
@@ -557,6 +597,46 @@ app.post("/add-record/:id", (req, res) => {
     }
   );
 });
+app.post("/update-record", async (req, res) => {
+  try {
+    console.log("Received data:", req.body);  // Log request body
+
+    const { record_id, drive_link, date, hospital_name, description } = req.body;
+
+    if (!record_id || !drive_link || !date || !hospital_name) {
+      console.log("Missing fields:", { record_id, drive_link, date, hospital_name });
+      return res.status(400).json({ success: false, message: "Missing fields" });
+    }
+
+    const sql = "UPDATE records SET drive_link = ?, date = ?, hospital_name = ?, description = ? WHERE record_id = ?";
+    await db.execute(sql, [drive_link, date, hospital_name, description, record_id]);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error updating record:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.post("/delete-record/:patient_id", (req, res) => {
+  const patient_id = req.params.patient_id; // Get patient_id from URL
+  const { record_id } = req.body; // Get record_id from request body
+
+  if (!record_id) {
+    return res.json({ success: false, message: "Record ID is required." });
+  }
+
+  const sql = `DELETE FROM records WHERE patient_id = ? AND record_id = ?`;
+
+  db.query(sql, [patient_id, record_id], (err, result) => {
+    if (err) {
+      console.error("Error deleting record:", err);
+      return res.json({ success: false, message: "Error deleting record." });
+    }
+    res.json({ success: true });
+  });
+});
+
 
 app.get("/treatment/:patient_id", authenticatePatientOrDoctor, (req, res) => {
   const patient_id = req.params.patient_id;
