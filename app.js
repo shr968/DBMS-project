@@ -22,7 +22,7 @@ app.set("views", path.join(__dirname, "views"));
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Sh@10m2124",
+  password: "",
   database: "documed",
 });
 
