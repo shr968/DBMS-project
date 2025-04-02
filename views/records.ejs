@@ -60,10 +60,9 @@
 
           <label for="hospital_name">Hospital Name:</label>
           <input type="text" id="hospital_name" name="hospital_name" required />
-          
+
           <label for="doctor_id">Doctor ID:</label>
           <input type="number" id="doctor_id" name="doctor_id" required />
-
 
           <label for="description">Description (Optional):</label>
           <textarea id="description" name="description"></textarea>
@@ -72,93 +71,6 @@
         </form>
       </div>
     </div>
-
-    <script>
-      function openForm() {
-        document.getElementById("popup-form").style.display = "block";
-      }
-      function closeForm() {
-        document.getElementById("popup-form").style.display = "none";
-      }
-    </script>
+    <script src="/js/records.js"></script>
   </body>
 </html>
-
-<style>
-  /* body {
-    font-family: "Poppins", sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f4f4f4;
-  } */
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background: #00b8b8;
-    color: white;
-  }
-
-  .add-record-btn {
-    padding: 10px 20px;
-    background: white;
-    color: #00b8b8;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-  }
-
-  .record-table {
-    width: 100%;
-    padding: 20px;
-    overflow-x: auto;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-  }
-
-  th,
-  td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: left;
-  }
-
-  th {
-    background: #00b8b8;
-    color: white;
-  }
-
-  .popup {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-  }
-
-  .popup-content {
-    background: white;
-    padding: 20px;
-    width: 400px;
-    margin: 100px auto;
-    border-radius: 10px;
-    position: relative;
-  }
-
-  .close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-  }
-</style>

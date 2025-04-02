@@ -1,137 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hospitals List</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/dashboard.css"> <!-- Using existing styling -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+    <!-- Using existing styling -->
     <style>
-        /* Center Content */
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Search Bar Styling */
-        .search-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            width: 60%; /* Fully visible */
-            border: 3px solid var(--blue);
-            border-radius: 12px;
-            overflow: hidden;
-            background: white;
-        }
-        #searchInput {
-            flex: 1; /* Takes up remaining space */
-            padding: 15px;
-            font-size: 18px;
-            border: none;
-            outline: none;
-            width: 100%;
-        }
-        .search-icon {
-            font-size: 24px;
-            color: var(--blue);
-            padding: 15px;
-            background: white;
-            cursor: pointer;
-        }
-
-        /* Hospital Cards */
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .hospital-card {
-            width: 400px;
-            height: 270px;
-            padding: 30px;
-            border-radius: 20px;
-            font-size: 22px;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.2s;
-        }
-        .hospital-card:hover {
-            transform: scale(1.05);
-        }
-        .hospital-card i {
-            font-size: 55px;
-            margin-bottom: 15px;
-            color: var(--blue);
-        }
-        .hospital-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--blue);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .hospital-name:hover {
-            text-decoration: underline;
-        }
+      /* Center Content */
+      /* body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      } */
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Registered <span>Hospitals</span></h1>
     <p>Browse through the list of hospitals that have signed up.</p>
 
     <!-- Search Bar -->
     <div class="search-container">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search by hospital name..." onkeyup="filterHospitals()">
-            <i class="fas fa-search search-icon" onclick="focusSearch()"></i>
-        </div>
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by hospital name..."
+          onkeyup="filterHospitals()"
+        />
+        <i class="fas fa-search search-icon" onclick="focusSearch()"></i>
+      </div>
     </div>
 
     <!-- Hospital List -->
     <div class="container" id="hospitalContainer">
-        <% hospitals.forEach(hospital => { %>
-            <div class="card hospital-card">
-                <i class="fas fa-hospital"></i>
-                <p><strong>ID:</strong> <%= hospital.hospital_id %></p>
-                <span class="hospital-name" onclick="viewDoctors(<%= hospital.hospital_id %>)"><%= hospital.name %></span>
-                <p><strong>Location:</strong> <%= hospital.location %></p>
-                <p><strong>Contact:</strong> <%= hospital.contact %></p>
-            </div>
-        <% }); %>
+      <% hospitals.forEach(hospital => { %>
+      <div class="card hospital-card">
+        <i class="fas fa-hospital"></i>
+        <p><strong>ID:</strong> <%= hospital.hospital_id %></p>
+        <span
+          class="hospital-name"
+          onclick="viewDoctors(<%= hospital.hospital_id %>)"
+          ><%= hospital.name %></span
+        >
+        <p><strong>Location:</strong> <%= hospital.location %></p>
+        <p><strong>Contact:</strong> <%= hospital.contact %></p>
+      </div>
+      <% }); %>
     </div>
 
     <script>
-        function filterHospitals() {
-            let input = document.getElementById("searchInput").value.toLowerCase();
-            let cards = document.querySelectorAll(".hospital-card");
+      function filterHospitals() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let cards = document.querySelectorAll(".hospital-card");
 
-            cards.forEach(card => {
-                let hospitalName = card.querySelector(".hospital-name").textContent.toLowerCase();
-                if (hospitalName.includes(input)) {
-                    card.style.display = "block";
-                } else {
-                    card.style.display = "none";
-                }
-            });
-        }
+        cards.forEach((card) => {
+          let hospitalName = card
+            .querySelector(".hospital-name")
+            .textContent.toLowerCase();
+          if (hospitalName.includes(input)) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
 
-        function focusSearch() {
-            document.getElementById("searchInput").focus(); // Makes cursor blink inside input
-        }
+      function focusSearch() {
+        document.getElementById("searchInput").focus(); // Makes cursor blink inside input
+      }
 
-        function viewDoctors(hospitalId) {
-            window.location.href = `/hospitals/${hospitalId}/doctors`;
-        }
+      function viewDoctors(hospitalId) {
+        window.location.href = `/hospitals/${hospitalId}/doctors`;
+      }
     </script>
-</body>
+  </body>
 </html>

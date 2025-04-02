@@ -1,138 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Doctors List</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/dashboard.css">
-    <style>
-        /* Center Content */
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px; /* Adjusted top margin for body */
-        }
-
-        /* Search Bar Styling */
-        .search-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            width: 60%;
-            border: 3px solid var(--blue);
-            border-radius: 12px;
-            overflow: hidden;
-            background: white;
-        }
-        #searchInput {
-            flex: 1;
-            padding: 15px;
-            font-size: 18px;
-            border: none;
-            outline: none;
-            width: 100%;
-        }
-        .search-icon {
-            font-size: 24px;
-            color: var(--blue);
-            padding: 15px;
-            background: white;
-            cursor: pointer;
-        }
-
-        /* Doctor Cards */
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .doctor-card {
-            width: 350px;
-            height: 250px; /* Increased card height */
-            padding: 25px;
-            border-radius: 15px;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            font-size: 8px; /* Reduced font size */
-            text-align: center;
-            transition: transform 0.2s;
-        }
-        .doctor-card:hover {
-            transform: scale(1.05);
-        }
-        .doctor-card i {
-            font-size: 50px;
-            margin-bottom: 10px;
-            color: var(--blue);
-        }
-        .doctor-name {
-            font-size: 20px; /* Reduced font size for doctor name */
-            font-weight: bold;
-            color: var(--blue);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .doctor-name:hover {
-            text-decoration: underline;
-        }
-
-        /* Heading Styling */
-        h1 {
-            margin-top: 10px; /* Reduced margin-top to bring the heading closer to the top */
-        }
-    </style>
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
     <h1>Doctors at <span><%= hospitalName %></span></h1>
     <p>Browse through the list of doctors in this hospital.</p>
 
     <!-- Search Bar -->
     <div class="search-container">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search by doctor name..." onkeyup="filterDoctors()">
-            <i class="fas fa-search search-icon" onclick="focusSearch()"></i>
-        </div>
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by doctor name..."
+          onkeyup="filterDoctors()"
+        />
+        <i class="fas fa-search search-icon" onclick="focusSearch()"></i>
+      </div>
     </div>
 
     <!-- Doctor List -->
     <div class="container" id="doctorContainer">
-        <% if (doctors.length > 0) { %>
-            <% doctors.forEach(doctor => { %>
-                <div class="doctor-card">
-                    <i class="fas fa-user-md"></i>
-                    <p style="font-size: 20px;"><strong>ID:</strong> <%= doctor.doctor_id %></p>
-                    <span class="doctor-name" style="font-size: 20px;">Dr.<%= doctor.first_name %> <%= doctor.last_name %></span>
-                    <p style="font-size: 20px;"><strong>Speciality:</strong> <%= doctor.speciality %></p>
-                </div>
-            <% }); %>
-        <% } else { %>
-            <p>No doctors found.</p>
-        <% } %>
+      <% if (doctors.length > 0) { %> <% doctors.forEach(doctor => { %>
+      <div class="doctor-card">
+        <i class="fas fa-user-md"></i>
+        <p style="font-size: 20px">
+          <strong>ID:</strong> <%= doctor.doctor_id %>
+        </p>
+        <span class="doctor-name" style="font-size: 20px"
+          >Dr.<%= doctor.first_name %> <%= doctor.last_name %></span
+        >
+        <p style="font-size: 20px">
+          <strong>Speciality:</strong> <%= doctor.speciality %>
+        </p>
+      </div>
+      <% }); %> <% } else { %>
+      <p>No doctors found.</p>
+      <% } %>
     </div>
 
     <script>
-        function filterDoctors() {
-            let input = document.getElementById("searchInput").value.toLowerCase();
-            let cards = document.querySelectorAll(".doctor-card");
+      function filterDoctors() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let cards = document.querySelectorAll(".doctor-card");
 
-            cards.forEach(card => {
-                let doctorName = card.querySelector(".doctor-name").textContent.toLowerCase();
-                card.style.display = doctorName.includes(input) ? "block" : "none";
-            });
-        }
+        cards.forEach((card) => {
+          let doctorName = card
+            .querySelector(".doctor-name")
+            .textContent.toLowerCase();
+          card.style.display = doctorName.includes(input) ? "block" : "none";
+        });
+      }
 
-        function focusSearch() {
-            document.getElementById("searchInput").focus();
-        }
+      function focusSearch() {
+        document.getElementById("searchInput").focus();
+      }
     </script>
-</body>
+  </body>
 </html>
