@@ -297,10 +297,17 @@ app.get("/hospital-dashboard/:hospital_id", (req, res) => {
 
   const hospital_id = req.params.hospital_id;
 
-  const sql = `SELECT t.patient_id, p.first_name, p.last_name, t.doctor_name 
-                 FROM treatment t 
-                 JOIN patients p ON t.patient_id = p.patient_id 
-                 WHERE t.hospital_id = ?`;
+  const sql = `
+    SELECT 
+    t.patient_id, 
+    p.first_name AS first_name, 
+    p.last_name AS last_name, 
+    CONCAT(d.first_name, ' ', d.last_name) AS doctor_name
+FROM treatment t
+JOIN patients p ON t.patient_id = p.patient_id
+JOIN doctors d ON t.doctor_id = d.doctor_id
+WHERE t.hospital_id = ?;
+  `;
 
   db.query(sql, [hospital_id], (err, results) => {
     if (err) {
@@ -310,6 +317,7 @@ app.get("/hospital-dashboard/:hospital_id", (req, res) => {
     res.render("hospital-dashboard", { hospital_id, treatments: results });
   });
 });
+
 
 //patient routes
 app.get("/patient-login", (req, res) => {
@@ -640,14 +648,20 @@ app.post("/delete-record/:patient_id", (req, res) => {
 
 app.get("/treatment/:patient_id", authenticatePatientOrDoctor, (req, res) => {
   const patient_id = req.params.patient_id;
+
   if (
     req.session.doctor_id ||
     req.session.hospital_id ||
     req.session.patient_id == patient_id
   ) {
-    const patient_id = req.params.patient_id;
+    const sql = `
+      SELECT t.*, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name, 
+             h.name AS hospital_name
+      FROM treatment t
+      JOIN doctors d ON t.doctor_id = d.doctor_id
+      JOIN hospital h ON t.hospital_id = h.hospital_id
+      WHERE t.patient_id = ?`;
 
-    const sql = `SELECT * FROM treatment WHERE patient_id = ?`;
     db.query(sql, [patient_id], (err, results) => {
       if (err) {
         console.error("Error fetching treatment:", err);
@@ -655,8 +669,11 @@ app.get("/treatment/:patient_id", authenticatePatientOrDoctor, (req, res) => {
       }
       res.render("treatment", { patient_id, treatments: results });
     });
-  } else res.redirect("/patient-login");
+  } else {
+    res.redirect("/patient-login");
+  }
 });
+
 app.post("/treatment/add", (req, res) => {
   const { doctor_id, doctor_name, hospital_id, hospital_name } = req.body;
   const patient_id = req.session.patient_id;
@@ -665,11 +682,11 @@ app.post("/treatment/add", (req, res) => {
     return res.redirect("/patient-login");
   }
 
-  const sql = `INSERT INTO treatment (patient_id, doctor_id, doctor_name, hospital_id, hospital_name) 
-                 VALUES (?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO treatment (patient_id, doctor_id, hospital_id) 
+                 VALUES (?, ?, ?)`;
   db.query(
     sql,
-    [patient_id, doctor_id, doctor_name, hospital_id, hospital_name],
+    [patient_id, doctor_id,hospital_id,],
     (err, result) => {
       if (err) {
         console.error("Error adding treatment:", err);

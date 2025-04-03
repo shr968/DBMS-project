@@ -30,12 +30,12 @@
           <% treatments.forEach(treatment => { %>
           <tr>
             <td><%= treatment.doctor_id %></td>
-            <td><%= treatment.doctor_name %></td>
+            <td><%= treatment.doctor_first_name %> <%= treatment.doctor_last_name %></td>
             <td><%= treatment.hospital_id %></td>
             <td><%= treatment.hospital_name %></td>
           </tr>
           <% }) %>
-        </tbody>
+        </tbody>        
       </table>
       <% } else { %>
       <p style="text-align: center; font-size: 1.6rem">
