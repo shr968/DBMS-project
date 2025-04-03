@@ -190,7 +190,8 @@ app.get("/doctor-dashboard/:doctor_id", async (req, res) => {
         SELECT p.patient_id, p.first_name, p.last_name, h.hospital_id, h.name AS hospital_name
         FROM patients p
         JOIN treatment t ON p.patient_id = t.patient_id
-        JOIN hospital h ON t.hospital_id = h.hospital_id
+        JOIN doctor_hospital dh ON t.doctor_id = dh.doctor_id
+        JOIN hospital h ON dh.hospital_id = h.hospital_id
         WHERE t.doctor_id = ?;
     `;
 
@@ -208,42 +209,49 @@ app.get("/doctor-dashboard/:doctor_id", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
 app.get("/doctor-patient-records/:hospitalId", (req, res) => {
   const hospitalId = req.params.hospitalId;
   const doctorId = req.session.doctor_id; // Assuming doctor_id is stored in session
 
+  if (!doctorId) {
+    return res.redirect("/doctor-login"); // Ensure doctor is logged in
+  }
+
   // Fetch patients treated by this doctor in this hospital
-  db.query(
-    `SELECT p.patient_id, p.first_name, p.last_name 
-     FROM patients p
-     JOIN treatment t ON p.patient_id = t.patient_id
-     WHERE t.doctor_id = ? AND t.hospital_id = ?`,
-    [doctorId, hospitalId],
-    (err, patients) => {
-      if (err) {
-        console.error("Error fetching patients:", err);
-        return res.status(500).send("Internal Server Error");
-      }
+  const sql = `
+    SELECT p.patient_id, p.first_name, p.last_name 
+    FROM patients p
+    JOIN treatment t ON p.patient_id = t.patient_id
+    JOIN doctor_hospital dh ON t.doctor_id = dh.doctor_id
+    WHERE t.doctor_id = ? AND dh.hospital_id = ?;
+  `;
 
-      // Get hospital name
-      db.query(
-        "SELECT name FROM hospital WHERE hospital_id = ?",
-        [hospitalId],
-        (err, hospital) => {
-          if (err) {
-            console.error("Error fetching hospital:", err);
-            return res.status(500).send("Internal Server Error");
-          }
-
-          res.render("doctor-patient-records", {
-            hospital_name: hospital[0]?.hospital_name || "Unknown Hospital",
-            patients,
-          });
-        }
-      );
+  db.query(sql, [doctorId, hospitalId], (err, patients) => {
+    if (err) {
+      console.error("Error fetching patients:", err);
+      return res.status(500).send("Internal Server Error");
     }
-  );
+
+    // Get hospital name
+    db.query(
+      "SELECT name FROM hospital WHERE hospital_id = ?",
+      [hospitalId],
+      (err, hospital) => {
+        if (err) {
+          console.error("Error fetching hospital:", err);
+          return res.status(500).send("Internal Server Error");
+        }
+
+        res.render("doctor-patient-records", {
+          hospital_name: hospital[0]?.name || "Unknown Hospital",
+          patients,
+        });
+      }
+    );
+  });
 });
+
 
 //hospital routes
 app.get("/hospital-register", (req, res) => {
@@ -298,16 +306,17 @@ app.get("/hospital-dashboard/:hospital_id", (req, res) => {
   const hospital_id = req.params.hospital_id;
 
   const sql = `
-    SELECT 
-    t.patient_id, 
-    p.first_name AS first_name, 
-    p.last_name AS last_name, 
-    CONCAT(d.first_name, ' ', d.last_name) AS doctor_name
-FROM treatment t
-JOIN patients p ON t.patient_id = p.patient_id
-JOIN doctors d ON t.doctor_id = d.doctor_id
-WHERE t.hospital_id = ?;
-  `;
+  SELECT 
+      t.patient_id, 
+      p.first_name AS first_name, 
+      p.last_name AS last_name, 
+      CONCAT(d.first_name, ' ', d.last_name) AS doctor_name
+  FROM treatment t
+  JOIN patients p ON t.patient_id = p.patient_id
+  JOIN doctors d ON t.doctor_id = d.doctor_id
+  JOIN doctor_hospital dh ON d.doctor_id = dh.doctor_id
+  WHERE dh.hospital_id = ?;
+`;
 
   db.query(sql, [hospital_id], (err, results) => {
     if (err) {
@@ -656,11 +665,12 @@ app.get("/treatment/:patient_id", authenticatePatientOrDoctor, (req, res) => {
   ) {
     const sql = `
       SELECT t.*, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name, 
-             h.name AS hospital_name
-      FROM treatment t
-      JOIN doctors d ON t.doctor_id = d.doctor_id
-      JOIN hospital h ON t.hospital_id = h.hospital_id
-      WHERE t.patient_id = ?`;
+       dh.hospital_id, h.name AS hospital_name
+FROM treatment t
+JOIN doctors d ON t.doctor_id = d.doctor_id
+JOIN doctor_hospital dh ON t.doctor_id = dh.doctor_id
+JOIN hospital h ON dh.hospital_id = h.hospital_id
+WHERE t.patient_id = ?;`
 
     db.query(sql, [patient_id], (err, results) => {
       if (err) {
@@ -674,28 +684,26 @@ app.get("/treatment/:patient_id", authenticatePatientOrDoctor, (req, res) => {
   }
 });
 
+
 app.post("/treatment/add", (req, res) => {
-  const { doctor_id, doctor_name, hospital_id, hospital_name } = req.body;
+  const { doctor_id } = req.body;
   const patient_id = req.session.patient_id;
 
   if (!patient_id) {
     return res.redirect("/patient-login");
   }
 
-  const sql = `INSERT INTO treatment (patient_id, doctor_id, hospital_id) 
-                 VALUES (?, ?, ?)`;
-  db.query(
-    sql,
-    [patient_id, doctor_id,hospital_id,],
-    (err, result) => {
-      if (err) {
-        console.error("Error adding treatment:", err);
-        return res.send("Error adding treatment.");
-      }
-      res.redirect(`/treatment/${patient_id}`);
+  const sql = `INSERT INTO treatment (patient_id, doctor_id) VALUES (?, ?)`;
+  
+  db.query(sql, [patient_id, doctor_id], (err, result) => {
+    if (err) {
+      console.error("Error adding treatment:", err);
+      return res.send("Error adding treatment.");
     }
-  );
+    res.redirect(`/treatment/${patient_id}`);
+  });
 });
+
 
 app.get("/view-hospitals", (req, res) => {
   const sql = "SELECT hospital_id, name, location, contact FROM hospital";
