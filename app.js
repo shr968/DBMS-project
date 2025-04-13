@@ -136,7 +136,7 @@ app.post("/doctor-register", (req, res) => {
 });
 
 function linkDoctorToHospital(doctor_id, hospital_id, res) {
-  const doctorHospitalSql = `INSERT INTO doctor_hospital (doctor_id, hospital_id) VALUES (?, ?)`;
+  const doctorHospitalSql = `INSERT INTO works_in (doctor_id, hospital_id) VALUES (?, ?)`;
 
   db.query(doctorHospitalSql, [doctor_id, hospital_id], (err) => {
     if (err) {
@@ -155,7 +155,7 @@ function linkDoctorToHospital(doctor_id, hospital_id, res) {
 
 // Function to link doctor to hospital
 function linkDoctorToHospital(doctor_id, hospital_id, res) {
-  const doctorHospitalSql = `INSERT INTO doctor_hospital (doctor_id, hospital_id) VALUES (?, ?)`;
+  const doctorHospitalSql = `INSERT INTO works_in (doctor_id, hospital_id) VALUES (?, ?)`;
 
   db.query(doctorHospitalSql, [doctor_id, hospital_id], (err) => {
     if (err) {
@@ -182,7 +182,7 @@ app.get("/doctor-dashboard/:doctor_id", async (req, res) => {
   const queryHospitals = `
         SELECT DISTINCT h.hospital_id, h.name AS hospital_name
         FROM hospital h
-        JOIN doctor_hospital dh ON h.hospital_id = dh.hospital_id
+        JOIN works_in dh ON h.hospital_id = dh.hospital_id
         WHERE dh.doctor_id = ?;
     `;
 
@@ -190,7 +190,7 @@ app.get("/doctor-dashboard/:doctor_id", async (req, res) => {
         SELECT p.patient_id, p.first_name, p.last_name, h.hospital_id, h.name AS hospital_name
         FROM patients p
         JOIN treatment t ON p.patient_id = t.patient_id
-        JOIN doctor_hospital dh ON t.doctor_id = dh.doctor_id
+        JOIN works_in dh ON t.doctor_id = dh.doctor_id
         JOIN hospital h ON dh.hospital_id = h.hospital_id
         WHERE t.doctor_id = ?;
     `;
@@ -223,7 +223,7 @@ app.get("/doctor-patient-records/:hospitalId", (req, res) => {
     SELECT p.patient_id, p.first_name, p.last_name 
     FROM patients p
     JOIN treatment t ON p.patient_id = t.patient_id
-    JOIN doctor_hospital dh ON t.doctor_id = dh.doctor_id
+    JOIN works_in dh ON t.doctor_id = dh.doctor_id
     WHERE t.doctor_id = ? AND dh.hospital_id = ?;
   `;
 
@@ -314,7 +314,7 @@ app.get("/hospital-dashboard/:hospital_id", (req, res) => {
   FROM treatment t
   JOIN patients p ON t.patient_id = p.patient_id
   JOIN doctors d ON t.doctor_id = d.doctor_id
-  JOIN doctor_hospital dh ON d.doctor_id = dh.doctor_id
+  JOIN works_in dh ON d.doctor_id = dh.doctor_id
   WHERE dh.hospital_id = ?;
 `;
 
@@ -668,7 +668,7 @@ app.get("/treatment/:patient_id", authenticatePatientOrDoctor, (req, res) => {
        dh.hospital_id, h.name AS hospital_name
 FROM treatment t
 JOIN doctors d ON t.doctor_id = d.doctor_id
-JOIN doctor_hospital dh ON t.doctor_id = dh.doctor_id
+JOIN works_in dh ON t.doctor_id = dh.doctor_id
 JOIN hospital h ON dh.hospital_id = h.hospital_id
 WHERE t.patient_id = ?;`
 
@@ -723,7 +723,7 @@ app.get("/hospitals/:id/doctors", (req, res) => {
   const query = `
       SELECT d.doctor_id, d.first_name, d.last_name, d.speciality, h.name as hospital_name
       FROM doctors d
-      JOIN doctor_hospital dh ON d.doctor_id = dh.doctor_id
+      JOIN works_in dh ON d.doctor_id = dh.doctor_id
       JOIN hospital h ON dh.hospital_id = h.hospital_id
       WHERE h.hospital_id = ?;
   `;
