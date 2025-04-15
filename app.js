@@ -67,16 +67,39 @@ app.get("/doctor-login", (req, res) => {
   res.render("doctor-login");
 });
 
+const createProcedure = `
+CREATE PROCEDURE doctor_login_proc (
+  IN p_doctor_id INT,
+  IN p_name VARCHAR(255)
+)
+BEGIN
+  SELECT * FROM doctors
+  WHERE doctor_id = p_doctor_id
+    AND CONCAT(first_name, ' ', last_name) = p_name;
+END
+`;
+
+db.query(createProcedure, (err, results) => {
+  if (err) {
+    console.error("Error creating stored procedure:", err);
+  } else {
+    console.log("Stored procedure created successfully.");
+  }
+});
+
+
+
 app.post("/doctor-login", (req, res) => {
   const { doctor_id, name } = req.body;
 
-  const sql = `SELECT * FROM doctors WHERE doctor_id = ? AND CONCAT(first_name, ' ', last_name) = ?`;
+  const sql = `CALL doctor_login_proc(?, ?)`;
   db.query(sql, [doctor_id, name], (err, results) => {
     if (err) {
       console.error("Login error:", err);
       return res.send("Error logging in.");
     }
-    if (results.length > 0) {
+    const doctorData = results[0];
+    if (doctorData.length > 0) {
       req.session.doctor_id = doctor_id;
       res.redirect(`/doctor-dashboard/${doctor_id}`);
     } else {
@@ -84,6 +107,9 @@ app.post("/doctor-login", (req, res) => {
     }
   });
 });
+
+
+
 
 app.get("/doctor-register", (req, res) => {
   res.render("doctor-register");
@@ -305,27 +331,45 @@ app.get("/hospital-dashboard/:hospital_id", (req, res) => {
 
   const hospital_id = req.params.hospital_id;
 
-  const sql = `
-  SELECT 
-      t.patient_id, 
-      p.first_name AS first_name, 
-      p.last_name AS last_name, 
-      CONCAT(d.first_name, ' ', d.last_name) AS doctor_name
-  FROM treatment t
-  JOIN patients p ON t.patient_id = p.patient_id
-  JOIN doctors d ON t.doctor_id = d.doctor_id
-  JOIN works_in dh ON d.doctor_id = dh.doctor_id
-  WHERE dh.hospital_id = ?;
-`;
+  const treatmentSql = `
+    SELECT 
+        t.patient_id, 
+        p.first_name AS first_name, 
+        p.last_name AS last_name, 
+        CONCAT(d.first_name, ' ', d.last_name) AS doctor_name
+    FROM treatment t
+    JOIN patients p ON t.patient_id = p.patient_id
+    JOIN doctors d ON t.doctor_id = d.doctor_id
+    JOIN works_in dh ON d.doctor_id = dh.doctor_id
+    WHERE dh.hospital_id = ?;
+  `;
 
-  db.query(sql, [hospital_id], (err, results) => {
+  const countSql = `
+    SELECT COUNT(DISTINCT t.patient_id) AS total_patients
+    FROM treatment t
+    JOIN doctors d ON t.doctor_id = d.doctor_id
+    JOIN works_in dh ON d.doctor_id = dh.doctor_id
+    WHERE dh.hospital_id = ?;
+  `;
+
+  db.query(treatmentSql, [hospital_id], (err, treatmentResults) => {
     if (err) {
-      console.error("Error fetching hospital dashboard data:", err);
+      console.error("Error fetching treatment data:", err);
       return res.send("Error loading hospital dashboard.");
     }
-    res.render("hospital-dashboard", { hospital_id, treatments: results });
+
+    db.query(countSql, [hospital_id], (err2, countResults) => {
+      if (err2) {
+        console.error("Error fetching patient count:", err2);
+        return res.send("Error loading hospital dashboard.");
+      }
+
+      const total_patients = countResults[0].total_patients;
+      res.render("hospital-dashboard", { hospital_id, treatments: treatmentResults, total_patients });
+    });
   });
 });
+
 
 
 //patient routes
@@ -359,33 +403,56 @@ function generatePatientID() {
   return Math.floor(10000 + Math.random() * 90000); // Random 5-digit number
 }
 
+const createTriggerQuery = `
+  CREATE TRIGGER validate_patient_insert BEFORE INSERT ON patients
+  FOR EACH ROW
+  BEGIN
+    -- Validate Date of Birth
+    IF NEW.dob > CURDATE() THEN
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Date of birth cannot be in the future';
+    END IF;
+  END;
+`;
+
+db.query(createTriggerQuery, (err, result) => {
+  if (err) {
+    console.error("Error creating trigger:", err);
+  } else {
+    console.log("Trigger created successfully");
+  }
+});
+
+
+
 app.post("/patient-register", (req, res) => {
-  const { first_name, middle_name, last_name, dob, sex, blood_group } =
-    req.body;
+  const { first_name, middle_name, last_name, dob, sex, blood_group } = req.body;
   const patient_id = generatePatientID();
 
   const sql = `INSERT INTO patients (patient_id, first_name, middle_name, last_name, dob, sex, blood_group)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+               VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-  db.query(
-    sql,
-    [patient_id, first_name, middle_name, last_name, dob, sex, blood_group],
-    (err, result) => {
-      if (err) {
-        console.error("Registration error:", err);
-        res.send("Error registering patient.");
-      } else {
-        res.render("mainpage", {
-          showLoginPopup: false,
-          showDoctorLoginPopup: true,
-          patient_id: patient_id,
-          doctor_id: null,
-          hospital_id: null, // Send the patient_id to the view
-        });
-      }
-    }
-  );
+               db.query(sql, [patient_id, first_name, middle_name, last_name, dob, sex, blood_group], (err, result) => {
+                if (err) {
+                  if (err.code === '45000') {
+                    // Handle the trigger error
+                    res.send("Date of birth cannot be in the future.");
+                  } else {
+                    console.error("Registration error:", err);
+                    res.send("Error registering patient.");
+                  }
+                } else {
+                  res.render("mainpage", {
+                    showLoginPopup: false,
+                    showDoctorLoginPopup: true,
+                    patient_id: patient_id,
+                    doctor_id: null,
+                    hospital_id: null,
+                  });
+                }
+              });              
 });
+
+
 
 app.get(
   "/patient-dashboard/:patient_id",
