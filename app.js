@@ -4,6 +4,11 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const app = express();
+require('dotenv').config();
+console.log("Using DB credentials:");
+console.log("Host:", process.env.DB_HOST);
+console.log("User:", process.env.DB_USER);
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,17 +27,18 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "mahakali",
-  database: "prms",
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT, 
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 db.connect((err) => {
   if (err) {
-    console.error("Database connection failed:", err);
+    console.error('❌ Connection failed:', err);
   } else {
-    console.log("Connected to MySQL Database");
+    console.log('✅ Connected to Clever Cloud MySQL!');
   }
 });
 
